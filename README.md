@@ -6,8 +6,8 @@ Sistema de backend para gestão de ecopontos, compartimentos, descartes, pontua�
 
 ## 1. Tecnologias
 
-- Java 21.
-- Spring Boot 4.1.2.
+- Java 21
+- Spring Boot 4.1.2
 - Spring Web MVC + Jackson: API REST e conversão JSON.
 - Spring Data JPA / Hibernate: persistência e mapeamento objeto-relacional.
 - Spring Security: autenticação HTTP Basic e autorização por perfil.
