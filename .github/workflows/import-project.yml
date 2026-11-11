@@ -1,0 +1,33 @@
+name: Import EcoPonto project package
+
+on:
+  push:
+    paths:
+      - ".import-package/**"
+
+permissions:
+  contents: write
+
+jobs:
+  unpack:
+    if: contains(github.event.head_commit.message, 'package upload')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Extract source package
+        run: |
+          if [ ! -f .import-package/COMPLETE ]; then
+            echo "Package marker not found; nothing to import."
+            exit 0
+          fi
+          cat .import-package/package.part* | base64 -d | tar -xz --strip-components=1
+          rm -rf .import-package
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+          git commit -m "feat: import EcoPonto implementation for AEP delivery"
+          git push
