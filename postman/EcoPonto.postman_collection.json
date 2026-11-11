@@ -1,0 +1,152 @@
+{
+  "info": {
+    "_postman_id": "8db2ec0e-9f1f-4fe7-9bd7-2040b44a2ec8",
+    "name": "EcoPonto Inteligente de Maringá",
+    "description": "Coleção de chamadas para demonstrar os fluxos da AEP. Defina baseUrl, adminEmail e adminPassword em um ambiente Postman.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080" },
+    { "key": "adminEmail", "value": "admin@ecoponto.local" },
+    { "key": "adminPassword", "value": "Admin123!" },
+    { "key": "cidadaoEmail", "value": "ana@example.com" },
+    { "key": "cidadaoPassword", "value": "SenhaForte123!" },
+    { "key": "parceiroEmail", "value": "mercado@example.com" },
+    { "key": "parceiroPassword", "value": "SenhaParceiro123!" },
+    { "key": "ecopontoId", "value": "1" },
+    { "key": "compartimentoId", "value": "1" },
+    { "key": "recompensaId", "value": "1" }
+  ],
+  "item": [
+    {
+      "name": "01 - Autenticação e cadastro",
+      "item": [
+        {
+          "name": "Cadastrar cidadão",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"nome\": \"Ana Cidadã\",\n  \"email\": \"{{cidadaoEmail}}\",\n  \"senha\": \"{{cidadaoPassword}}\",\n  \"perfil\": \"CIDADAO\"\n}" },
+            "url": "{{baseUrl}}/api/auth/cadastro"
+          }
+        },
+        {
+          "name": "Login cidadão",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"{{cidadaoEmail}}\",\n  \"senha\": \"{{cidadaoPassword}}\"\n}" },
+            "url": "{{baseUrl}}/api/auth/login"
+          }
+        },
+        {
+          "name": "Consultar meu perfil e saldo",
+          "request": {
+            "auth": { "type": "basic", "basic": [{ "key": "username", "value": "{{cidadaoEmail}}", "type": "string" }, { "key": "password", "value": "{{cidadaoPassword}}", "type": "string" }] },
+            "method": "GET",
+            "url": "{{baseUrl}}/api/auth/me"
+          }
+        },
+        {
+          "name": "Cadastrar parceiro",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"nome\": \"Mercado Parceiro\",\n  \"email\": \"{{parceiroEmail}}\",\n  \"senha\": \"{{parceiroPassword}}\",\n  \"perfil\": \"PARCEIRO\",\n  \"cnpj\": \"12345678000190\"\n}" },
+            "url": "{{baseUrl}}/api/auth/cadastro"
+          }
+        }
+      ]
+    },
+    {
+      "name": "02 - Ecopontos e compartimentos (administrador)",
+      "item": [
+        {
+          "name": "Criar ecoponto",
+          "request": {
+            "auth": { "type": "basic", "basic": [{ "key": "username", "value": "{{adminEmail}}", "type": "string" }, { "key": "password", "value": "{{adminPassword}}", "type": "string" }] },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"nome\": \"EcoPonto Centro\",\n  \"endereco\": \"Avenida Brasil, Maringá - PR\",\n  \"latitude\": -23.4205,\n  \"longitude\": -51.9333\n}" },
+            "url": "{{baseUrl}}/api/ecopontos"
+          }
+        },
+        {
+          "name": "Listar ecopontos",
+          "request": { "auth": { "type": "basic", "basic": [{ "key": "username", "value": "{{adminEmail}}", "type": "string" }, { "key": "password", "value": "{{adminPassword}}", "type": "string" }] }, "method": "GET", "url": "{{baseUrl}}/api/ecopontos" }
+        },
+        {
+          "name": "Criar compartimento reciclável",
+          "request": {
+            "auth": { "type": "basic", "basic": [{ "key": "username", "value": "{{adminEmail}}", "type": "string" }, { "key": "password", "value": "{{adminPassword}}", "type": "string" }] },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"tipoResiduo\": \"RECICLAVEL\",\n  \"capacidadeMaxima\": 100,\n  \"alertaPercentual\": 80\n}" },
+            "url": "{{baseUrl}}/api/ecopontos/{{ecopontoId}}/compartimentos"
+          }
+        },
+        {
+          "name": "Atualizar nível do compartimento",
+          "request": {
+            "auth": { "type": "basic", "basic": [{ "key": "username", "value": "{{adminEmail}}", "type": "string" }, { "key": "password", "value": "{{adminPassword}}", "type": "string" }] },
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"nivelAtual\": 85\n}" },
+            "url": "{{baseUrl}}/api/compartimentos/{{compartimentoId}}/nivel"
+          }
+        }
+      ]
+    },
+    {
+      "name": "03 - Descartes e pontuação (cidadão)",
+      "item": [
+        {
+          "name": "Registrar descarte reciclável",
+          "request": {
+            "auth": { "type": "basic", "basic": [{ "key": "username", "value": "{{cidadaoEmail}}", "type": "string" }, { "key": "password", "value": "{{cidadaoPassword}}", "type": "string" }] },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"compartimentoId\": {{compartimentoId}},\n  \"tipoResiduo\": \"RECICLAVEL\",\n  \"pesoKg\": 2.5\n}" },
+            "url": "{{baseUrl}}/api/descartes"
+          }
+        },
+        {
+          "name": "Consultar descartes do cidadão",
+          "request": { "auth": { "type": "basic", "basic": [{ "key": "username", "value": "{{cidadaoEmail}}", "type": "string" }, { "key": "password", "value": "{{cidadaoPassword}}", "type": "string" }] }, "method": "GET", "url": "{{baseUrl}}/api/descartes" }
+        }
+      ]
+    },
+    {
+      "name": "04 - Recompensas e resgates",
+      "item": [
+        {
+          "name": "Criar recompensa (parceiro)",
+          "request": {
+            "auth": { "type": "basic", "basic": [{ "key": "username", "value": "{{parceiroEmail}}", "type": "string" }, { "key": "password", "value": "{{parceiroPassword}}", "type": "string" }] },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"descricao\": \"Desconto de R$ 5,00\",\n  \"custoPontos\": 20\n}" },
+            "url": "{{baseUrl}}/api/recompensas"
+          }
+        },
+        {
+          "name": "Listar recompensas ativas",
+          "request": { "auth": { "type": "basic", "basic": [{ "key": "username", "value": "{{cidadaoEmail}}", "type": "string" }, { "key": "password", "value": "{{cidadaoPassword}}", "type": "string" }] }, "method": "GET", "url": "{{baseUrl}}/api/recompensas" }
+        },
+        {
+          "name": "Resgatar recompensa",
+          "request": { "auth": { "type": "basic", "basic": [{ "key": "username", "value": "{{cidadaoEmail}}", "type": "string" }, { "key": "password", "value": "{{cidadaoPassword}}", "type": "string" }] }, "method": "POST", "url": "{{baseUrl}}/api/resgates/{{recompensaId}}" }
+        }
+      ]
+    },
+    {
+      "name": "05 - Relatórios (administrador)",
+      "item": [
+        {
+          "name": "Exportar descartes CSV",
+          "request": { "auth": { "type": "basic", "basic": [{ "key": "username", "value": "{{adminEmail}}", "type": "string" }, { "key": "password", "value": "{{adminPassword}}", "type": "string" }] }, "method": "GET", "url": "{{baseUrl}}/api/relatorios/descartes.csv?tipoResiduo=RECICLAVEL" }
+        }
+      ]
+    }
+  ]
+}
