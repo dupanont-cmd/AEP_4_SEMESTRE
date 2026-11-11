@@ -6,7 +6,7 @@ on:
       - ".import-package/**"
 
 permissions:
-  contents: write
+  contents:  write
 
 jobs:
   unpack:
